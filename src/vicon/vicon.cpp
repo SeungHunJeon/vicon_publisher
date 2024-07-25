@@ -66,20 +66,20 @@ void Vicon::viconUpdate() {
   }
 }
 
-void Vicon::publishData(const geometry_msgs::msg::PoseStamped& msg) {
-  publisher_->publish(msg);
-}
-
 ViconPublisherNode::ViconPublisherNode()
-  : Node("vicon_publisher_node"), vicon_("192.168.1.5", 10) {
+  : Node("vicon_publisher_node"), Vicon("192.168.1.5", 10) {
   publisher_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("vicon_pose", 10);
   timer_ = this->create_wall_timer(
     std::chrono::milliseconds(1), std::bind(&ViconPublisherNode::timerCallback, this));
-  vicon_.initVicon();
+  initVicon();
 }
 
 void ViconPublisherNode::timerCallback() {
-  vicon_.viconUpdate();
+  viconUpdate();
+}
+
+void ViconPublisherNode::publishData(const geometry_msgs::msg::PoseStamped& msg) {
+  publisher_->publish(msg);
 }
 
 int main(int argc, char *argv[]) {

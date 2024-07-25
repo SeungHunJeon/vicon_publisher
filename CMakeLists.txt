@@ -40,6 +40,15 @@ target_link_libraries(vicon_publisher_node
   ${VICON_LIBRARIES}
 )
 
+install(DIRECTORY third_party/
+  DESTINATION third_party
+)
+
+install(FILES
+  ${VICON_LIBRARIES}
+  DESTINATION lib
+)
+
 ament_target_dependencies(vicon_publisher_node rclcpp std_msgs geometry_msgs)
 
 install(TARGETS
