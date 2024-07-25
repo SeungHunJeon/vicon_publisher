@@ -56,11 +56,11 @@ void Vicon::viconUpdate() {
       pose_msg.pose.orientation.z = quat.Rotation[2];
       pose_msg.pose.orientation.w = quat.Rotation[3];
 
-      std::stringstream ss;
-      ss << "Subject: " << subject_name << ", Segment: " << segment_name << ", Translation: "
-         << trans.Translation[0] << ", " << trans.Translation[1] << ", " << trans.Translation[2];
-      std::string data_str = ss.str();
-      std::cout << data_str << std::endl;
+      // std::stringstream ss;
+      // ss << "Subject: " << subject_name << ", Segment: " << segment_name << ", Translation: "
+      //    << trans.Translation[0] << ", " << trans.Translation[1] << ", " << trans.Translation[2];
+      // std::string data_str = ss.str();
+      // std::cout << data_str << std::endl;
       publishData(pose_msg);
     }
   }
