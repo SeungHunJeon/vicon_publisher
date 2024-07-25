@@ -11,7 +11,7 @@
 #include "DataStreamClient.h"
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
-#include "geometry_msgs/msg/pose.hpp"
+#include "geometry_msgs/msg/pose_stamped.hpp"
 
 using namespace ViconDataStreamSDK::CPP;
 
@@ -27,10 +27,9 @@ private:
   Client client_;
   std::string host_address_;
   int buffer_size_;
-  rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr robot_pose_publisher_;
-  rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr object_pose_publisher_;
+  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr publisher_;
 
-  void publishData(const std::string& name, const geometry_msgs::msg::Pose& msg);
+  void publishData(const geometry_msgs::msg::PoseStamped& msg);
 };
 
 class ViconPublisherNode : public rclcpp::Node {
@@ -39,8 +38,7 @@ public:
 
 private:
   void timerCallback();
-  rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr object_pose_publisher_;
-  rclcpp::Publisher<geometry_msgs::msg::Pose>::SharedPtr robot_pose_publisher_;
+  rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr publisher_;
   rclcpp::TimerBase::SharedPtr timer_;
   Vicon vicon_;
 };

@@ -46,38 +46,33 @@ void Vicon::viconUpdate() {
       Output_GetSegmentGlobalRotationQuaternion quat =
           client_.GetSegmentGlobalRotationQuaternion(subject_name, segment_name);
 
-      geometry_msgs::msg::Pose pose_msg;
-      pose_msg.position.x = trans.Translation[0];
-      pose_msg.position.y = trans.Translation[1];
-      pose_msg.position.z = trans.Translation[2];      
-      pose_msg.orientation.x = quat.Rotation[0];
-      pose_msg.orientation.y = quat.Rotation[1];
-      pose_msg.orientation.z = quat.Rotation[2];
-      pose_msg.orientation.w = quat.Rotation[3];
+      geometry_msgs::msg::PoseStamped pose_msg;
+      pose_msg.header.frame_id = segment_name;
+      pose_msg.pose.position.x = trans.Translation[0];
+      pose_msg.pose.position.y = trans.Translation[1];
+      pose_msg.pose.position.z = trans.Translation[2];      
+      pose_msg.pose.orientation.x = quat.Rotation[0];
+      pose_msg.pose.orientation.y = quat.Rotation[1];
+      pose_msg.pose.orientation.z = quat.Rotation[2];
+      pose_msg.pose.orientation.w = quat.Rotation[3];
 
       std::stringstream ss;
       ss << "Subject: " << subject_name << ", Segment: " << segment_name << ", Translation: "
          << trans.Translation[0] << ", " << trans.Translation[1] << ", " << trans.Translation[2];
       std::string data_str = ss.str();
       std::cout << data_str << std::endl;
-      publishData(subject_name, pose_msg);
+      publishData(pose_msg);
     }
   }
 }
 
-void Vicon::publishData(const std::string& name, const geometry_msgs::msg::Pose& msg) {
-  if (name == "robot") {
-    robot_pose_publisher_->publish(msg);
-  }
-  else if (name == "object") {
-    object_pose_publisher_->publish(msg);
-  }
+void Vicon::publishData(const geometry_msgs::msg::PoseStamped& msg) {
+  publisher_->publish(msg);
 }
 
 ViconPublisherNode::ViconPublisherNode()
-  : Node("vicon_publisher_node"), vicon_("localhost:801", 10) {
-  robot_pose_publisher_ = this->create_publisher<geometry_msgs::msg::Pose>("vicon_robot_pose", 10);
-  object_pose_publisher_ = this->create_publisher<geometry_msgs::msg::Pose>("vicon_object_pose", 10);
+  : Node("vicon_publisher_node"), vicon_("192.168.1.5", 10) {
+  publisher_ = this->create_publisher<geometry_msgs::msg::PoseStamped>("vicon_pose", 10);
   timer_ = this->create_wall_timer(
     std::chrono::milliseconds(1), std::bind(&ViconPublisherNode::timerCallback, this));
   vicon_.initVicon();
